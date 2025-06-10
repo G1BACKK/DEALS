@@ -87,26 +87,21 @@
     </div>
 
     <!-- Facebook Pixel Code - Add your pixel ID here -->
-    <script>
-        // Replace 'YOUR_PIXEL_ID' with your actual Facebook Pixel ID
-        const PIXEL_ID = 'YOUR_PIXEL_ID';
-        
-        // Facebook Pixel Base Code
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        
-        // Initialize pixel only if PIXEL_ID is set
-        if (PIXEL_ID !== 'YOUR_PIXEL_ID') {
-            fbq('init', PIXEL_ID);
-            fbq('track', 'PageView');
-        }
-    </script>
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+fbq('init', '677028811789830');
+fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+src="https://www.facebook.com/tr?id=677028811789830&ev=PageView&noscript=1"
+/></noscript>
     <!-- End Facebook Pixel Code -->
 
     <script>
